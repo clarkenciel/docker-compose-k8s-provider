@@ -66,7 +66,7 @@ fn spawn_daemon() -> Result<ForkResult> {
             docker::info!("New session started, forking daemon");
             match fork() {
                 Ok(child @ ForkResult::Child) => {
-                    unistd::daemon(false, false)?;
+                    daemonize()?;
                     Ok(child)
                 }
                 Ok(ForkResult::Parent { child }) => {
@@ -79,6 +79,20 @@ fn spawn_daemon() -> Result<ForkResult> {
                 }
             }
         }
+    }
+}
+
+#[cfg(target_os = "linux")]
+fn daemonize() -> Result<()> {
+    Ok(unistd::daemon(false, false)?)
+}
+
+#[cfg(target_os = "macos")]
+fn daemonize() -> Result<()> {
+    #[allow(deprecated)]
+    match unsafe { libc::daemon(0, 0) } {
+        0 => Ok(()),
+        _ => Err(nix::errno::Errno::last().into()),
     }
 }
 

@@ -1,0 +1,8 @@
+services:
+
+  test:
+    provider:
+      type: docker-compose-k8s-provider
+      options:
+        resource: pod/traefik
+        port-mapping: 3001:80
