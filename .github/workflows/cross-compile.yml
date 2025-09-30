@@ -2,7 +2,10 @@ name: Cross compile
 
 on:
   push:
-
+    tags:
+      - v.*
+    branches:
+      - releases
 jobs:
   compile:
     name: "Compile - ${{matrix.platform.os-name}}"
@@ -29,3 +32,8 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: "--locked --release"
           strip: true
+      - name: Publish artifacts and release
+        uses: houseabsolute/actions-rust-release@v0
+        with:
+          executable-name: docker-compose-k8s-provider
+          target: ${{ matrix.platform.target }}
