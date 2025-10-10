@@ -3,7 +3,7 @@ name: Cross compile
 on:
   push:
     tags:
-      - v.*
+      - v*
 jobs:
   compile:
     name: "Compile - ${{matrix.platform.os-name}}"
